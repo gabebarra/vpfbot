@@ -1,0 +1,24 @@
+{
+  "name": "vpfbot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "input": "^1.0.1",
+    "qrcode-terminal": "^0.12.0",
+    "set-interval-async": "^3.0.3",
+    "smartinterval": "^1.0.1",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7",
+    "telegram": "^2.23.2",
+    "uuidv4": "^6.2.13",
+    "whatsapp-web.js": "^1.25.0"
+  },
+  "type": "module"
+}
