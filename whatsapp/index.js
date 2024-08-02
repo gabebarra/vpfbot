@@ -41,7 +41,6 @@ async function sendMedia() {
     if (err) {
       console.error(err.message);
     }
-    console.log('Connected to the database.');
   });
 
   const sql = 'SELECT * FROM media WHERE is_sent = 0';
@@ -52,10 +51,13 @@ async function sendMedia() {
       }
       const media = MessageMedia.fromFilePath(row.path);
       const caption = row.caption;
-      console.log(caption);
+
       await client.sendMessage(receiver, media, {
         caption: caption,
       });
+
+      console.log('Mensagem enviada!');
+      console.log(caption);
     });
     db.run('UPDATE media SET is_sent = 1 WHERE is_sent = 0', async (err) => {
       if (err) {
@@ -68,6 +70,5 @@ async function sendMedia() {
     if (err) {
       console.error(err.message);
     }
-    console.log('Close the database connection.');
   });
 }
