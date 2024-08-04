@@ -56,31 +56,11 @@ async function sendMedia() {
       });
 
       console.log('Mensagem enviada!');
-      console.log(caption);
     });
     db.run('UPDATE media SET is_sent = 1 WHERE is_sent = 0', async (err) => {
       if (err) {
         console.error(err.message);
       }
-    });
-  });
-
-  db.serialize(() => {
-    db.each('SELECT * FROM media WHERE is_sent = 1', async (err, row) => {
-      fs.unlink(row.path, (err) => {
-        if (err) {
-          console.error(`Error removing file: ${err}`);
-          return;
-        }
-
-        console.log(`File ${row.path} has been successfully removed.`);
-      });
-      db.run(`DELETE FROM media WHERE id=?`, row.id, function (err) {
-        if (err) {
-          return console.error(err.message);
-        }
-        console.log(`Row(s) deleted ${this.changes}`);
-      });
     });
   });
 
