@@ -6,7 +6,7 @@ import qrcode from 'qrcode-terminal';
 import { promises as fs } from 'fs';
 import SmartInterval from 'smartinterval';
 
-//const receiver = '556499859851-1610905290@g.us';
+const admin = '556499859851-1610905290@g.us';
 const receiver = '120363273020068108@g.us'; // VPF 2024
 
 const client = new Client({
@@ -34,6 +34,42 @@ client.on('ready', async () => {
   }, 10000);
 
   interval.start();
+});
+
+client.on('message', async (message) => {
+  if (message.from === admin && message.fromMe && message.body === '!cleandb') {
+    let db = new sqlite3.Database('../media/db.sqlite3', (err) => {
+      if (err) {
+        console.error(err.message);
+      }
+    });
+
+    db.serialize(() => {
+      db.each('SELECT * FROM media WHERE is_sent = 1', async (err, row) => {
+        fs.unlink(row.path, (err) => {
+          if (err) {
+            console.error(`Error removing file: ${err}`);
+            return;
+          }
+
+          console.log(`File ${row.path} has been successfully removed.`);
+        });
+        db.run('DELETE FROM media WHERE id = ?', row.id, async (err) => {
+          if (err) {
+            console.error(err.message);
+          }
+        });
+      });
+    });
+
+    await client.sendMessage(admin, 'All media was deleted!');
+
+    db.close((err) => {
+      if (err) {
+        console.error(err.message);
+      }
+    });
+  }
 });
 
 async function sendMedia() {
