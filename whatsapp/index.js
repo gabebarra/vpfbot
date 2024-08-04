@@ -3,7 +3,7 @@ const { Client, LocalAuth, MessageMedia } = wwebjs;
 
 import sqlite3 from 'sqlite3';
 import qrcode from 'qrcode-terminal';
-//import { setIntervalAsync, clearIntervalAsync } from 'set-interval-async';
+import { promises as fs } from 'fs';
 import SmartInterval from 'smartinterval';
 
 //const receiver = '556499859851-1610905290@g.us';
@@ -43,9 +43,8 @@ async function sendMedia() {
     }
   });
 
-  const sql = 'SELECT * FROM media WHERE is_sent = 0';
   db.serialize(() => {
-    db.each(sql, async (err, row) => {
+    db.each('SELECT * FROM media WHERE is_sent = 0', async (err, row) => {
       if (err) {
         console.error(err.message);
       }
@@ -63,6 +62,25 @@ async function sendMedia() {
       if (err) {
         console.error(err.message);
       }
+    });
+  });
+
+  db.serialize(() => {
+    db.each('SELECT * FROM media WHERE is_sent = 1', async (err, row) => {
+      fs.unlink(row.path, (err) => {
+        if (err) {
+          console.error(`Error removing file: ${err}`);
+          return;
+        }
+
+        console.log(`File ${row.path} has been successfully removed.`);
+      });
+      db.run(`DELETE FROM media WHERE id=?`, row.id, function (err) {
+        if (err) {
+          return console.error(err.message);
+        }
+        console.log(`Row(s) deleted ${this.changes}`);
+      });
     });
   });
 
