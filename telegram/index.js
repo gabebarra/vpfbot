@@ -28,7 +28,8 @@ import sqlite3 from 'sqlite3';
   //console.log(client.session.save()); // Save this string to avoid logging in again
 
   async function onMessage(event) {
-    const filter = ['diariodetorcedor', 'diariodeinfos'];
+    //const filter = ['diariodetorcedor', 'diariodeinfos'];
+    const filter = ['NBAInjuries']
 
     const chat = await event.message.getChat();
     const username = chat.username;
